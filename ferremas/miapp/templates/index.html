@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos</title>
+    <script src="{% static '/js/scripts.js' %}"></script>
+</head>
+<body>
+    <h1>Lista de Productos</h1>
+    <ul id="productos-list"></ul>
+</form>
+
+<br>
+    <h1>Agregar Nuevo Producto</h1>
+    <form id="productoForm">
+        {% csrf_token %}
+        <label for="codigo_producto">Código del Producto:</label><br>
+        <input type="text" id="codigo_producto" name="codigo_producto"><br>
+        <label for="marca">Marca:</label><br>
+        <input type="text" id="marca" name="marca"><br>
+        <label for="nombre">Nombre:</label><br>
+        <input type="text" id="nombre" name="nombre"><br>
+        <label for="codigo">Código:</label><br>
+        <input type="text" id="codigo" name="codigo"><br>
+        <label for="fecha">Fecha del Precio:</label><br>
+        <input type="datetime-local" id="fecha" name="fecha"><br>
+        <label for="valor">Valor del Precio:</label><br>
+        <input type="number" id="valor" name="valor" step="0.01"><br><br>
+        <button type="button" onclick="submitProducto()">Agregar Producto</button>
+    </form>
+</body>
+</html>

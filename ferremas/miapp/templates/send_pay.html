@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Redireccionando a Webpay</title>
+    <script src="{% static '/js/scripts.js' %}"></script>
+</head>
+</head>
+<body onload='document.form_pay.submit()'>
+    <form action="{{response.url}}" name="form_pay" method="POST">
+        <input type="hidden" name="token_ws" value="{{response.token}}">
+        <input type="hidden" name="amount" value="{{amount}}">
+    </form>
+</body>
+</html>
+

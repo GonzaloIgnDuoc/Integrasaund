@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado del Pago</title>
+</head>
+<body>
+    <h1>Detalle de la Transacción</h1>
+    <p>Número de Tarjeta: {{ transaction_detail.card_number }}</p>
+    <p>Fecha de la Transacción: {{ transaction_detail.transaction_date }}</p>
+    <p>Estado: {{ transaction_detail.state }}</p>
+    <p>Tipo de Pago: {{ transaction_detail.pay_type }}</p>
+    <p>Monto: ${{ transaction_detail.amount }}</p>
+    <p>Código de Autorización: {{ transaction_detail.authorization_code }}</p>
+    <p>Orden de Compra: {{ transaction_detail.buy_order }}</p>
+</body>
+</html>
