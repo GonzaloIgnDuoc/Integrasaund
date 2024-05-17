@@ -1,5 +1,3 @@
-
-// Función para cargar productos desde la API
 function cargarProductos() {
     fetch('/productos/')
     .then(response => response.json())
@@ -7,19 +5,17 @@ function cargarProductos() {
         const lista = document.getElementById('productos-list');
         lista.innerHTML = '';
         data.forEach(producto => {
+            productos.push(producto); // Añadir a la lista de productos
             const precios = producto.precios.map(p => `Fecha: ${p.fecha} - Valor: $${p.valor}`).join(', ');
             const item = document.createElement('li');
             item.innerHTML = `
                 Nombre: ${producto.nombre} - Marca: ${producto.marca} - ${precios} - Código del Producto: ${producto.codigo_producto} 
-                <button onclick="editarProducto(${producto.id})">Editar</button> 
-                <button onclick="eliminarProducto(${producto.id})">Eliminar</button>
-                <button onclick="pagarProducto(${producto.id}, ${producto.precios[0].valor})">PAGAR</button>`;
+                <button onclick="agregarAlCarrito(${producto.id})">Añadir al carrito</button>`;
             lista.appendChild(item);
         });
     })
     .catch(error => console.error('Error:', error));
 }
-
 // Función para agregar un nuevo producto
 function submitProducto() {
     const formData = {
@@ -54,29 +50,51 @@ function submitProducto() {
         alert('Error al agregar el producto.');
     });
 }
-
 // Función para pagar un producto
-function pagarProducto(productId, amount) {
+async function pagarProducto(productId, amount) {
     console.log(`Iniciando pago para el producto ID: ${productId} por el monto: ${amount}`);
-    fetch('/create-pay/', {
+    fetch('/webpay-plus-create/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')  // Añadir CSRF token
+            'X-CSRFToken': getCookie('csrftoken')
         },
         body: JSON.stringify({ amount: amount })
     })
-    .then(async response => {
-        if (!response.ok) {
-            return response.json().then(error => { throw new Error(error.error); });
-        }
+    .then(response => {
+        console.log('Response Status:', response.status);
         return response.json();
     })
     .then(data => {
+        console.log('Response Data:', data);
         if (data.url) {
-            console.log("Redirigiendo a: ", data.url);
-            window.location.href = data.url;
+            // Crear y enviar el formulario automáticamente
+            const form = document.createElement('form');
+            form.method = 'post';
+            form.action = data.url;
+            form.name = 'form_pay';
+
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = 'token_ws';
+            tokenInput.value = data.token;
+
+            const amountInput = document.createElement('input');
+            amountInput.type = 'hidden';
+            amountInput.name = 'amount';
+            amountInput.value = amount;
+
+            form.appendChild(tokenInput);
+            form.appendChild(amountInput);
+            document.body.appendChild(form);
+
+            // Redirigir automáticamente
+            const body = document.createElement('body');
+            body.setAttribute('onload', 'document.form_pay.submit()');
+            body.appendChild(form);
+            document.body.appendChild(body);
+            document.form_pay.submit();
         } else {
             console.error('Error:', data.error);
             alert('Error al iniciar el pago: ' + data.error);
@@ -84,35 +102,39 @@ function pagarProducto(productId, amount) {
     })
     .catch(error => console.error('Error:', error));
 }
-
-
-
-// Función para eliminar un producto
-function eliminarProducto(id) {
-    fetch(`/productos/${id}/`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken')
-        }
-    })
-    .then(response => {
-        if (response.ok) {
-            alert('Producto eliminado con éxito!');
-            cargarProductos(); // Recargar la lista de productos
-        } else {
-            alert('Error al eliminar el producto.');
-        }
-    })
-    .catch(error => console.error('Error:', error));
+// Función para agregar un producto al carrito
+function agregarAlCarrito(id) {
+    const producto = productos.find(p => p.id === id);
+    if (producto) {
+        carrito.push(producto);
+        alert('Producto añadido al carrito');
+        console.log('Carrito:', carrito);
+        mostrarCarrito(); // Mostrar el carrito actualizado
+    } else {
+        alert('Producto no encontrado');
+    }
 }
-
-// Función para editar un producto
-function editarProducto(id) {
-    // Aquí deberías implementar la lógica para editar el producto.
-    // Podrías abrir un modal o un formulario prellenado con los datos del producto a editar.
-    alert('Función de edición no implementada.');
+// Función para mostrar los productos en el carrito
+function mostrarCarrito() {
+    const carritoLista = document.getElementById('carrito-list');
+    carritoLista.innerHTML = '';
+    carrito.forEach(producto => {
+        const precios = producto.precios.map(p => `Fecha: ${p.fecha} - Valor: $${p.valor}`).join(', ');
+        const item = document.createElement('li');
+        item.innerHTML = `
+            Nombre: ${producto.nombre} - Marca: ${producto.marca} - ${precios} - Código del Producto: ${producto.codigo_producto}
+            <button onclick="pagarProducto(${producto.precios[0].id}, ${producto.precios[0].valor})">PAGAR</button>`;
+        carritoLista.appendChild(item);
+    });
 }
-
+// Función para calcular el total del carrito
+function calcularTotal() {
+    const total = carrito.reduce((sum, producto) => {
+        return sum + producto.precios[0].valor;
+    }, 0);
+    document.getElementById('txt-total').value = total;
+    document.getElementById('total-display').innerText = total;
+}
 // Función para obtener el token CSRF
 function getCookie(name) {
     let cookieValue = null;
@@ -128,6 +150,10 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+// Variables globales
+const productos = [];
+const carrito = [];
 
 // Cargar productos al cargar la página
 window.onload = cargarProductos;

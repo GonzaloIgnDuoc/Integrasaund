@@ -1,20 +1,11 @@
 from django.shortcuts import render,get_object_or_404
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from .serializer import ProductoSerializer,PrecioSerializer
-from django.http import JsonResponse,HttpResponse, HttpRequest
-from django.views.decorators.csrf import csrf_exempt
-from .models import Producto, Precio
+from miapp.serializer import ProductoSerializer,PrecioSerializer
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from miapp.models import Producto, Precio
 import json
-import datetime as dt
-from transbank.error.transbank_error import TransbankError
-from transbank.webpay.webpay_plus.transaction import Transaction
-from transbank.common.options import WebpayOptions
-from transbank.common.integration_commerce_codes import IntegrationCommerceCodes
-from transbank.common.integration_api_keys import IntegrationApiKeys
-import random
-
-
 
 def index(request):
     return render(request, 'index.html')
@@ -115,78 +106,9 @@ def producto_detail(request, id):
                 valor=precio_data['valor']
             )
         return JsonResponse({'mensaje': 'Producto actualizado con éxito!'})
+#Pruebas
+def lista_productos(request):
+    productos = Producto.objects.all()
+    print(request)
+    return render(request, 'index.html', {'productos': productos})
 
-@csrf_exempt
-def webpay_plus_create(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            product_id = data.get('product_id')
-            amount = data.get('amount')
-
-            buy_order = str(random.randrange(1000000, 99999999))
-            session_id = str(random.randrange(1000000, 99999999))
-            return_url = request.build_absolute_uri('commit-pay/')
-
-            tx = Transaction(WebpayOptions(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY))
-            response = tx.create(buy_order, session_id, amount, return_url)
-            print('Response from Webpay:', response)
-
-            if 'url' in response and 'token' in response:
-                return JsonResponse({'url': response['token'], 'token': response['url']})
-            else:
-                return JsonResponse({'error': 'La respuesta de Webpay no contiene los atributos esperados.'}, status=500)
-        except Exception as e:
-            print(f'Error: {e}')
-            return JsonResponse({'error': str(e)}, status=500)
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=400)
-
-@csrf_exempt 
-def commit_pay(request):
-    print("aaRequest method:", request.method)
-    print('commitpay', commit_pay    )
-    print('request: ', request.POST)
-    token = request.GET.get('token_ws')
-    TBK_TOKEN = request.POST.get('TBK_TOKEN')
-    TBK_ID_SESSION = request.POST.get('TBK_ID_SESSION')
-    TBK_ORDEN_COMPRA = request.POST.get('TBK_ORDEN_COMPRA')
-    
-    #TRANSACCIÓN REALIZADA
-    if TBK_TOKEN is None and TBK_ID_SESSION is None  and TBK_ORDEN_COMPRA is None and token is not None:
-        #APROBAR TRANSACCION
-        tx = Transaction(WebpayOptions(IntegrationCommerceCodes.WEBPAY_PLUS, IntegrationApiKeys.WEBPAY))
-        response = tx.commit(token)
-        status = response.get('status')
-        buy_order = response.get('buy_order')
-        session_id = response.get('session_id')
-
-        print('status: ', status)
-        response_code = response.get('response_code')
-        print('response_code: ', response_code)
-        #TRANSACCIÓN APROBADA
-        if status == 'AUTHORIZED' and response_code == 0:
-            state = ''
-            if response.get('status') == 'AUTHORIZED':
-                state = 'Aceptado'
-            pay_type = ''
-            if response.get('payment_type_code') == 'VD':
-                pay_type = 'Tarjeta de Débito'
-            amount = int(response.get('amount'))
-            amount = f'{amount:,.0f}'.replace(',', '.')
-            transaction_date = dt.datetime.strptime(response.get('transaction_date'), '%Y-%m-%dT%H:%M:%S.%fZ')
-            transaction_date = '{:%d-%m-%Y %H%M:%S}'.format(transaction_date)
-            transaction_detail = {
-                'card_number': response.get('card_detail').get('card_number'),
-                'transaction_date': transaction_date,
-                'state': state,
-                'pay_type': pay_type,
-                'amount': amount,
-                'authorization_code': response.get('authorization_code'),
-                'buy_order': response.get('buy_order')
-            }
-            return render(request, 'commitpay.html', {'transaction_detail': transaction_detail})
-        else:
-            return HttpResponse('ERROR EN LA TRANSACCIÓN, SE RECHAZA LA TRANSACCIÓN')
-    else:                             
-        return HttpResponse('ERROR EN LA TRANSACCIÓN, SE CANCELO EL PAGO')

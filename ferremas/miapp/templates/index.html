@@ -7,11 +7,6 @@
     <script src="{% static '/js/scripts.js' %}"></script>
 </head>
 <body>
-    <h1>Lista de Productos</h1>
-    <ul id="productos-list"></ul>
-</form>
-
-<br>
     <h1>Agregar Nuevo Producto</h1>
     <form id="productoForm">
         {% csrf_token %}
@@ -29,5 +24,12 @@
         <input type="number" id="valor" name="valor" step="0.01"><br><br>
         <button type="button" onclick="submitProducto()">Agregar Producto</button>
     </form>
+
+    <h1>Lista de Productos</h1>
+    <ul id="productos-list"></ul>
+</form>
+<br>
+<h1>Carrito de Compras</h1>
+    <ul id="carrito-list"></ul>
 </body>
 </html>

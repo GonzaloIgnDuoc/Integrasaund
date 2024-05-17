@@ -73,7 +73,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ferremas.wsgi.application'
-
+APPEND_SLASH = False
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

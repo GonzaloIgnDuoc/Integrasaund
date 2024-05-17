@@ -17,8 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from miapp.views import ProductoViewSet, PrecioViewSet
-from miapp import views
+from miapp.views.views import ProductoViewSet,PrecioViewSet, index, producto_detail
+from miapp.views import transbank
+
 
 router = DefaultRouter()
 router.register(r'productos', ProductoViewSet)
@@ -27,8 +28,8 @@ router.register(r'precios', PrecioViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('index', views.index, name='index'),
-    path('productos/<int:id>/', views.producto_detail, name='producto_detail'),
-    path('create-pay/', views.webpay_plus_create, name='create-pay'),
-    path('commit-pay/', views.commit_pay, name='commit-pay'),
+    path('index', index, name='index'),
+    path('productos/<int:id>/', producto_detail, name='producto_detail'),
+    path('webpay-plus-create/', transbank.webpay_plus_create),
+    path('webpay-plus-create/commitpay/', transbank.commit_pay, name='commit-pay'),
 ]
