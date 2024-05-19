@@ -1,18 +1,38 @@
 function cargarProductos() {
-    fetch('/productos/')
+    // Primero, obtén el valor del dólar
+    fetch('/get_dolar_data/')
     .then(response => response.json())
-    .then(data => {
-        const lista = document.getElementById('productos-list');
-        lista.innerHTML = '';
-        data.forEach(producto => {
-            productos.push(producto); // Añadir a la lista de productos
-            const precios = producto.precios.map(p => `Fecha: ${p.fecha} - Valor: $${p.valor}`).join(', ');
-            const item = document.createElement('li');
-            item.innerHTML = `
-                Nombre: ${producto.nombre} - Marca: ${producto.marca} - ${precios} - Código del Producto: ${producto.codigo_producto} 
-                <button onclick="agregarAlCarrito(${producto.id})">Añadir al carrito</button>`;
-            lista.appendChild(item);
-        });
+    .then(dolarData => {
+        const dolarValueString = dolarData['Dolares'][0]['Valor'];
+        const dolarValue = Number(dolarValueString.replace(',', '.'));
+        if (isNaN(dolarValue)) {
+            throw new Error('Valor del dólar no es un número');
+        }
+
+        // Luego, obtén los productos
+        fetch('/productos/')
+        .then(response => response.json())
+        .then(data => {
+            const lista = document.getElementById('productos-list');
+            lista.innerHTML = '';
+            data.forEach(producto => {
+                const precios = producto.precios.map(p => {
+                    let valor = Number(p.valor.replace(',', '.'));
+                    if (isNaN(valor)) {
+                        throw new Error('Valor del producto no es un número');
+                    }
+                    const valorEnDL = (valor / (dolarValue )).toFixed(2);  // Asegúrate de ajustar el valor del dólar también
+                    return `Valor en CLP: $${valor} - Valor en Dolar: $${valorEnDL} - `;
+                }).join(', ');
+                const item = document.createElement('li');
+                item.innerHTML = `
+                    Nombre: ${producto.nombre} - Marca: ${producto.marca} - ${precios}  Código del Producto: ${producto.codigo_producto} 
+                    
+                    <button onclick="pagarProducto(${producto.precios[0].id}, ${producto.precios[0].valor})">PAGAR</button>`;
+                lista.appendChild(item);
+            });/*<button onclick="agregarAlCarrito(${producto.id})">Añadir</button> */
+        })
+        .catch(error => console.error('Error:', error));
     })
     .catch(error => console.error('Error:', error));
 }
@@ -114,7 +134,8 @@ function agregarAlCarrito(id) {
         alert('Producto no encontrado');
     }
 }
-// Función para mostrar los productos en el carrito
+
+/* Función para mostrar los productos en el carrito
 function mostrarCarrito() {
     const carritoLista = document.getElementById('carrito-list');
     carritoLista.innerHTML = '';
@@ -134,7 +155,7 @@ function calcularTotal() {
     }, 0);
     document.getElementById('txt-total').value = total;
     document.getElementById('total-display').innerText = total;
-}
+}*/
 // Función para obtener el token CSRF
 function getCookie(name) {
     let cookieValue = null;

@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from miapp.views.views import ProductoViewSet,PrecioViewSet, index, producto_detail
-from miapp.views import transbank
+from miapp.views import transbank, views
 
 
 router = DefaultRouter()
@@ -32,4 +32,5 @@ urlpatterns = [
     path('productos/<int:id>/', producto_detail, name='producto_detail'),
     path('webpay-plus-create/', transbank.webpay_plus_create),
     path('webpay-plus-create/commitpay/', transbank.commit_pay, name='commit-pay'),
+    path('get_dolar_data/', views.get_dolar_data, name='get_dolar_data'), 
 ]

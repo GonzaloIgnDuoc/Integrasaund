@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from miapp.models import Producto, Precio
 import json
+from miapp.views import api_request_dolar
 
 def index(request):
     return render(request, 'index.html')
@@ -68,6 +69,7 @@ def productos_list(request):
                 'precios': precios
             })
         return JsonResponse(productos_list, safe=False)
+
     elif request.method == 'POST':
         data = json.loads(request.body)
         producto = Producto.objects.create(
@@ -107,8 +109,10 @@ def producto_detail(request, id):
             )
         return JsonResponse({'mensaje': 'Producto actualizado con éxito!'})
 #Pruebas
-def lista_productos(request):
-    productos = Producto.objects.all()
-    print(request)
-    return render(request, 'index.html', {'productos': productos})
+def get_dolar_data(request):
+    # Supongamos que tienes una función llamada obtener_valor_dolar que devuelve el valor del dólar
+    valor_dolar = api_request_dolar.get_dolar_data()
 
+    # Ahora, puedes devolver este valor en la respuesta JSON
+    
+    return JsonResponse(valor_dolar)

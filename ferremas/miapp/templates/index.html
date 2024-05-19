@@ -7,6 +7,8 @@
     <script src="{% static '/js/scripts.js' %}"></script>
 </head>
 <body>
+    <button onclick="window.location.href=`{% url 'admin:index' %}`">Ir al Admin</button>
+    <button onclick="window.location.href='/'">API</button>
     <h1>Agregar Nuevo Producto</h1>
     <form id="productoForm">
         {% csrf_token %}
@@ -27,9 +29,8 @@
 
     <h1>Lista de Productos</h1>
     <ul id="productos-list"></ul>
-</form>
-<br>
-<h1>Carrito de Compras</h1>
-    <ul id="carrito-list"></ul>
+
+    <!--<h1>Carrito de Comprass</h1>
+    <ul id="carrito-list"></ul>!-->
 </body>
 </html>
