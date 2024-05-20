@@ -1,5 +1,4 @@
 function cargarProductos() {
-    // Primero, obtén el valor del dólar
     fetch('/get_dolar_data/')
     .then(response => response.json())
     .then(dolarData => {
@@ -9,8 +8,7 @@ function cargarProductos() {
             throw new Error('Valor del dólar no es un número');
         }
 
-        // Luego, obtén los productos
-        fetch('/productos/')
+        fetch('/api/productos/')
         .then(response => response.json())
         .then(data => {
             const lista = document.getElementById('productos-list');
@@ -18,19 +16,28 @@ function cargarProductos() {
             data.forEach(producto => {
                 const precios = producto.precios.map(p => {
                     let valor = Number(p.valor.replace(',', '.'));
+                    let valorRedondeado = (valor).toFixed(2);
                     if (isNaN(valor)) {
                         throw new Error('Valor del producto no es un número');
                     }
-                    const valorEnDL = (valor / (dolarValue )).toFixed(2);  // Asegúrate de ajustar el valor del dólar también
-                    return `Valor en CLP: $${valor} - Valor en Dolar: $${valorEnDL} - `;
-                }).join(', ');
-                const item = document.createElement('li');
+                    const valorEnDL = (valor / dolarValue).toFixed(2);
+                    return `<strong><p class="card-text">Valor en CLP:</strong> $${valor}</p> 
+                            <strong><p class="card-text">Valor en CLP:</strong> $${valorEnDL}</p>`;
+                }).join('<br>');
+                const item = document.createElement('div');
+                item.className = 'col-md-4 product-card';
                 item.innerHTML = `
-                    Nombre: ${producto.nombre} - Marca: ${producto.marca} - ${precios}  Código del Producto: ${producto.codigo_producto} 
-                    
-                    <button onclick="pagarProducto(${producto.precios[0].id}, ${producto.precios[0].valor})">PAGAR</button>`;
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">${producto.nombre} </h5>
+                            <h6>${producto.marca}</h6>
+                            <p class="card-text">${precios}</p>
+                            <p class="card-text">Código del Producto: ${producto.codigo_producto}</p>
+                            <button class="btn btn-primary" onclick="pagarProducto(${producto.precios[0].id}, ${producto.precios[0].valor})">PAGAR</button>
+                        </div>
+                    </div>`;
                 lista.appendChild(item);
-            });/*<button onclick="agregarAlCarrito(${producto.id})">Añadir</button> */
+            });
         })
         .catch(error => console.error('Error:', error));
     })
@@ -49,7 +56,7 @@ function submitProducto() {
         }]
     };
 
-    fetch('/productos/', {
+    fetch('api/productos/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

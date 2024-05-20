@@ -3,15 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Resultado del Pago</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .transaction-details {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .transaction-details h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .transaction-details p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Detalle de la Transacción</h1>
-    <p>Número de Tarjeta: {{ transaction_detail.card_number }}</p>
-    <p>Fecha de la Transacción: {{ transaction_detail.transaction_date }}</p>
-    <p>Estado: {{ transaction_detail.state }}</p>
-    <p>Tipo de Pago: {{ transaction_detail.pay_type }}</p>
-    <p>Monto: ${{ transaction_detail.amount }}</p>
-    <p>Código de Autorización: {{ transaction_detail.authorization_code }}</p>
-    <p>Orden de Compra: {{ transaction_detail.buy_order }}</p>
+    <div class="container">
+        <div class="transaction-details">
+            <h1>Detalle de la Transacción</h1>
+            <p><strong>Número de Tarjeta:</strong> {{ transaction_detail.card_number }}</p>
+            <p><strong>Fecha de la Transacción:</strong> {{ transaction_detail.transaction_date }}</p>
+            <p><strong>Estado:</strong> {{ transaction_detail.state }}</p>
+            <p><strong>Tipo de Pago:</strong> {{ transaction_detail.pay_type }}</p>
+            <p><strong>Monto:</strong> ${{ transaction_detail.amount }}</p>
+            <p><strong>Código de Autorización:</strong> {{ transaction_detail.authorization_code }}</p>
+            <p><strong>Orden de Compra:</strong> {{ transaction_detail.buy_order }}</p>
+            <a href="/index" class="btn btn-primary mt-3">Volver al Inicio</a>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

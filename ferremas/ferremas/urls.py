@@ -27,10 +27,11 @@ router.register(r'precios', PrecioViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
     path('index', index, name='index'),
     path('productos/<int:id>/', producto_detail, name='producto_detail'),
     path('webpay-plus-create/', transbank.webpay_plus_create),
     path('webpay-plus-create/commitpay/', transbank.commit_pay, name='commit-pay'),
-    path('get_dolar_data/', views.get_dolar_data, name='get_dolar_data'), 
+    path('get_dolar_data/', views.get_dolar_data, name='get_dolar_data'),
+    path('', index, name='index'), 
 ]

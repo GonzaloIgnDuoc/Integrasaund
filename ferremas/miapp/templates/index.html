@@ -4,33 +4,88 @@
 <head>
     <meta charset="UTF-8">
     <title>Productos</title>
-    <script src="{% static '/js/scripts.js' %}"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="{% static 'js/scripts.js' %}"></script>
+    <style>
+        body {
+            padding: 20px;
+        }
+        .product-card {
+            margin-bottom: 20px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
 <body>
-    <button onclick="window.location.href=`{% url 'admin:index' %}`">Ir al Admin</button>
-    <button onclick="window.location.href='/'">API</button>
-    <h1>Agregar Nuevo Producto</h1>
-    <form id="productoForm">
-        {% csrf_token %}
-        <label for="codigo_producto">Código del Producto:</label><br>
-        <input type="text" id="codigo_producto" name="codigo_producto"><br>
-        <label for="marca">Marca:</label><br>
-        <input type="text" id="marca" name="marca"><br>
-        <label for="nombre">Nombre:</label><br>
-        <input type="text" id="nombre" name="nombre"><br>
-        <label for="codigo">Código:</label><br>
-        <input type="text" id="codigo" name="codigo"><br>
-        <label for="fecha">Fecha del Precio:</label><br>
-        <input type="datetime-local" id="fecha" name="fecha"><br>
-        <label for="valor">Valor del Precio:</label><br>
-        <input type="number" id="valor" name="valor" step="0.01"><br><br>
-        <button type="button" onclick="submitProducto()">Agregar Producto</button>
-    </form>
-
-    <h1>Lista de Productos</h1>
-    <ul id="productos-list"></ul>
-
-    <!--<h1>Carrito de Comprass</h1>
-    <ul id="carrito-list"></ul>!-->
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col">
+                <button class="btn btn-primary" onclick="window.location.href=`{% url 'admin:index' %}`">Ir al Admin</button>
+                <button class="btn btn-secondary" onclick="window.location.href='/api/'">API</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h1>Agregar Nuevo Producto</h1>
+                <form id="productoForm" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="codigo_producto">Código del Producto</label>
+                            <input type="text" class="form-control" id="codigo_producto" name="codigo_producto" required>
+                            <div class="invalid-feedback">
+                                Por favor, ingrese el código del producto.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="marca">Marca</label>
+                            <input type="text" class="form-control" id="marca" name="marca" required>
+                            <div class="invalid-feedback">
+                                Por favor, ingrese la marca del producto.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                            <div class="invalid-feedback">
+                                Por favor, ingrese el nombre del producto.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="codigo">Código</label>
+                            <input type="text" class="form-control" id="codigo" name="codigo" required>
+                            <div class="invalid-feedback">
+                                Por favor, ingrese el código del producto.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha">Fecha del Precio</label>
+                            <input type="datetime-local" class="form-control" id="fecha" name="fecha" required>
+                            <div class="invalid-feedback">
+                                Por favor, ingrese la fecha del precio.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="valor">Valor del Precio</label>
+                            <input type="number" class="form-control" id="valor" name="valor" step="0.01" required>
+                            <div class="invalid-feedback">
+                                Por favor, ingrese el valor del precio.
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="submitProducto()">Agregar Producto</button>
+                </form>
+                <h1>Lista de Productos</h1>
+                <div id="productos-list" class="row"></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
