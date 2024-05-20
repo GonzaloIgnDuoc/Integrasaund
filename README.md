@@ -7,12 +7,13 @@ Remover entorno
 Crear entorno
   - python -m venv env
 
-- Instalar dependencias
-pip install django
-pip install django-cors-headers
-pip install djangorestframework
-pip install mysql
-pip install transbank-sdk
+Instalar dependencias
+- pip install django
+- pip install django-cors-headers
+- pip install djangorestframework
+- pip install mysql
+- pip install transbank-sdk
+- pip install request
 
 ** Se encuentran en requirements.txt
 
