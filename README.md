@@ -17,6 +17,20 @@ Instalar dependencias
 
 ** Se encuentran en requirements.txt
 
+En el código, deberá ingresar las credenciales de Mysql
+Estás deberán ser ingresadas en: ferremas/ferremas/settings.py
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'schema', --nombre de esquema
+        'USER': '-', 
+        'PASSWORD': '-',
+        'HOST': 'localhost',  # O una URL de servidor remoto
+        'PORT': '3306'
+    }
+}
+
 En Mysql se deberá crear un schema "ferremas"
 **Tablas para importar se adjuntara en zip
 En MySql-> Server-> Import -> seleccionar "/ferremas.sql" -> Start import
