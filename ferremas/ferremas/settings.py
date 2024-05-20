@@ -81,9 +81,9 @@ APPEND_SLASH = False
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ferremas',
-        'USER': 'root',
-        'PASSWORD': 'GLeiva.3751',
+        'NAME': 'schema',
+        'USER': '-',
+        'PASSWORD': '-',
         'HOST': 'localhost',  # O una URL de servidor remoto
         'PORT': '3306'
     }
